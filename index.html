@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitoreo de Consumo de Energía</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #163157, #0E0016);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      background: white;
+      color: #333;
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #ff8c00;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      margin-bottom: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #ff8c00;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e67e00;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    #resultado {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      text-align: center;
+      color: #163157;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: #ccc;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Monitoreo de Consumo de Energía</h1>
+
+    <label for="fechaDato">Agregar dato - Fecha:</label>
+    <input type="date" id="fechaDato" min="2025-01-01" max="2025-12-31">
+
+    <label for="consumoDato">Consumo (kWh):</label>
+    <input type="number" id="consumoDato" step="any" min="0">
+
+    <button onclick="agregarDato()">Agregar</button>
+
+    <table id="tablaDatos">
+      <thead>
+        <tr>
+          <th>Día del Año</th>
+          <th>Consumo (kWh)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <hr>
+
+    <label for="fechaEstimacion">Fecha a estimar:</label>
+    <input type="date" id="fechaEstimacion" min="2025-01-01" max="2025-12-31">
+
+    <button onclick="estimar()">Estimar Consumo</button>
+
+    <p id="resultado"></p>
+  </div>
+
+  <script>
+    const datos = [];
+
+    const diaDelAnio = (fechaStr) => {
+      const fecha = new Date(fechaStr + "T00:00:00");
+      const inicio = new Date(fecha.getFullYear(), 0, 1);
+      const diff = fecha - inicio;
+      return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+    };
+
+    const actualizarTabla = () => {
+      const tbody = document.querySelector("#tablaDatos tbody");
+      tbody.innerHTML = "";
+      datos.forEach(d => {
+        const row = `<tr><td>${d.dia}</td><td>${d.consumo}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    };
+
+    const agregarDato = () => {
+      const fecha = document.getElementById("fechaDato").value;
+      const consumo = parseFloat(document.getElementById("consumoDato").value);
+      if (!fecha || isNaN(consumo)) return alert("Ingresa una fecha y consumo válidos.");
+
+      const dia = diaDelAnio(fecha);
+      datos.push({ dia, consumo });
+      datos.sort((a, b) => a.dia - b.dia);
+      actualizarTabla();
+      alert(`Dato agregado para el día ${dia}`);
+    };
+
+    const estimar = async () => {
+      const fecha = document.getElementById("fechaEstimacion").value;
+      if (!fecha) return alert("Selecciona una fecha para estimar.");
+      if (datos.length < 2) return alert("Se necesitan al menos dos datos para estimar.");
+
+      const x = diaDelAnio(fecha);
+      const X = datos.map(d => d.dia);
+      const Y = datos.map(d => d.consumo);
+
+      try {
+        const res = await fetch("http://localhost:5000/interpolate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ x, X, Y })
+        });
+
+        if (!res.ok) throw new Error("No se pudo estimar el consumo.");
+
+        const data = await res.json();
+        document.getElementById("resultado").textContent =
+          `Consumo estimado para el día ${x}: ${data.resultado.toFixed(2)} kWh`;
+
+      } catch (err) {
+        alert(err.message);
+      }
+    };
+  </script>
+</body>
+</html>
