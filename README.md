@@ -23,7 +23,7 @@ Todos los comandos se ejecutan desde la raíz del proyecto, en la terminal:
 
 | Comando                                                    | Acción                                                                 |
 |------------------------------------------------------------|------------------------------------------------------------------------|
-| `git clone https://github.com/TU-USUARIO/TU-REPO.git`      | Clona el repositorio a tu máquina local                               |
+| `git clone https://github.com/krlo-dev/Proyecto-de-modelamiento`      | Clona el repositorio a tu máquina local                               |
 | `cd nombre-del-repo`                                       | Entra a la carpeta del proyecto                                       |
 | `pip install flask flask-cors oct2py`                      | Instala las dependencias necesarias para ejecutar la API              |
 | `python api.py`                                            | Inicia el servidor Flask en `http://localhost:5000/`                  |
