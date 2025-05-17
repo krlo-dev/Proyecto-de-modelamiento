@@ -1,0 +1,108 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #163157, #0E0016);
+  color: white;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  margin: 0;
+}
+
+.container {
+  background: white;
+  color: #333;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  box-sizing: border-box;
+}
+
+h1 {
+  color: #ff8c00;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 1rem;
+  display: block;
+}
+
+input, button {
+  width: 100%; /* que ocupen todo el ancho del contenedor */
+  padding: 0.6rem 1rem; /* padding horizontal para que el texto no quede pegado */
+  margin: 0.3rem 0 1rem 0; /* margen arriba y abajo, sin margen horizontal */
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box; /* importante para que padding no aumente el ancho */
+  display: block;
+}
+
+button {
+  background-color: #ff8c00;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e67e00;
+}
+
+table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: center;
+}
+
+#resultado {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  text-align: center;
+  color: #163157;
+}
+
+canvas {
+  margin-top: 2rem;
+  max-width: 100%;
+  height: auto;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 2rem 0;
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .container {
+    padding: 1rem;
+    max-width: 100%;
+    border-radius: 0.5rem;
+  }
+
+  input, button {
+    max-width: 100%;
+  }
+}
