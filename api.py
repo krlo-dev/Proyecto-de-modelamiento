@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import oct2py
 
@@ -7,25 +7,22 @@ CORS(app)
 
 oc = oct2py.Oct2Py()
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 @app.route("/interpolate", methods=["POST"])
 def interpolate():
     try:
         data = request.get_json()
-        print(" Recibido:", data)
-
         x = data['x']
         X = data['X']
         Y = data['Y']
-
-        print(f"Estimar en x={x}")
-        print(f"Datos X: {X}")
-        print(f"Datos Y: {Y}")
 
         if len(X) != len(Y):
             raise ValueError("Los arrays X y Y deben tener la misma longitud.")
 
         resultado = oc.IntLineal(x, X, Y)
-        print(f"Resultado de la interpolación: {resultado}")
 
         return jsonify({'resultado': resultado})
 

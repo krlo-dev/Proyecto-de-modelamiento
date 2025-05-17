@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Monitoreo de Consumo de Energía</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -10,11 +11,9 @@
       color: white;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
       min-height: 100vh;
       padding: 2rem;
     }
-
     .container {
       background: white;
       color: #333;
@@ -22,31 +21,26 @@
       padding: 2rem;
       max-width: 700px;
       width: 100%;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
     }
-
     h1 {
       color: #ff8c00;
       text-align: center;
       margin-bottom: 1.5rem;
     }
-
     label {
       font-weight: bold;
       margin-top: 1rem;
       display: block;
     }
-
     input, button {
       width: 100%;
       padding: 0.6rem;
-      margin-top: 0.3rem;
-      margin-bottom: 1rem;
+      margin: 0.3rem 0 1rem;
       border-radius: 0.5rem;
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-
     button {
       background-color: #ff8c00;
       color: white;
@@ -54,33 +48,30 @@
       border: none;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #e67e00;
     }
-
     table {
       width: 100%;
       margin-top: 1rem;
       border-collapse: collapse;
     }
-
     table, th, td {
       border: 1px solid #ccc;
     }
-
     th, td {
       padding: 0.5rem;
       text-align: center;
     }
-
     #resultado {
       font-size: 1.2rem;
       margin-top: 1rem;
       text-align: center;
       color: #163157;
     }
-
+    canvas {
+      margin-top: 2rem;
+    }
     hr {
       border: 0;
       height: 1px;
@@ -94,62 +85,98 @@
     <h1>Monitoreo de Consumo de Energía</h1>
 
     <label for="fechaDato">Agregar dato - Fecha:</label>
-    <input type="date" id="fechaDato" min="2025-01-01" max="2025-12-31">
+    <input type="date" id="fechaDato" min="2025-01-01" max="2025-12-31" />
 
     <label for="consumoDato">Consumo (kWh):</label>
-    <input type="number" id="consumoDato" step="any" min="0">
+    <input type="number" id="consumoDato" step="any" min="0" />
 
     <button onclick="agregarDato()">Agregar</button>
 
     <table id="tablaDatos">
-      <thead>
-        <tr>
-          <th>Día del Año</th>
-          <th>Consumo (kWh)</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Día del Año</th><th>Consumo (kWh)</th></tr></thead>
       <tbody></tbody>
     </table>
 
-    <hr>
+    <hr />
 
     <label for="fechaEstimacion">Fecha a estimar:</label>
-    <input type="date" id="fechaEstimacion" min="2025-01-01" max="2025-12-31">
-
+    <input type="date" id="fechaEstimacion" min="2025-01-01" max="2025-12-31" />
     <button onclick="estimar()">Estimar Consumo</button>
-
     <p id="resultado"></p>
+    <canvas id="graficoConsumo"></canvas>
   </div>
 
   <script>
     const datos = [];
+    let chart = null;
 
-    const diaDelAnio = (fechaStr) => {
-      const fecha = new Date(fechaStr + "T00:00:00");
-      const inicio = new Date(fecha.getFullYear(), 0, 1);
-      const diff = fecha - inicio;
-      return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+    const diaDelAnio = f => {
+      const d = new Date(f + "T00:00:00"), ini = new Date(d.getFullYear(), 0, 1);
+      return Math.floor((d - ini) / (1000 * 60 * 60 * 24)) + 1;
     };
 
     const actualizarTabla = () => {
       const tbody = document.querySelector("#tablaDatos tbody");
-      tbody.innerHTML = "";
-      datos.forEach(d => {
-        const row = `<tr><td>${d.dia}</td><td>${d.consumo}</td></tr>`;
-        tbody.innerHTML += row;
-      });
+      tbody.innerHTML = datos.map(d => `<tr><td>${d.dia}</td><td>${d.consumo}</td></tr>`).join('');
+      actualizarGrafico();
     };
 
     const agregarDato = () => {
       const fecha = document.getElementById("fechaDato").value;
       const consumo = parseFloat(document.getElementById("consumoDato").value);
       if (!fecha || isNaN(consumo)) return alert("Ingresa una fecha y consumo válidos.");
-
       const dia = diaDelAnio(fecha);
       datos.push({ dia, consumo });
       datos.sort((a, b) => a.dia - b.dia);
       actualizarTabla();
       alert(`Dato agregado para el día ${dia}`);
+    };
+
+    const actualizarGrafico = (estimado = null) => {
+      const ctx = document.getElementById("graficoConsumo").getContext("2d");
+      const puntos = datos.map(d => ({ x: d.dia, y: d.consumo }));
+
+      const datasets = [
+        {
+          label: 'Datos',
+          data: puntos,
+          borderColor: '#ff8c00',
+          backgroundColor: '#ff8c00',
+          tension: 0,
+          pointRadius: 5,
+          fill: false,
+          order: 1
+        }
+      ];
+
+      if (estimado) {
+        datasets.push({
+          label: 'Estimado',
+          data: [estimado],
+          backgroundColor: '#163157',
+          borderColor: '#163157',
+          pointRadius: 8,
+          pointStyle: 'circle',
+          showLine: false,
+          order: 0
+        });
+      }
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: { datasets },
+        options: {
+          responsive: true,
+          scales: {
+            x: { type: 'linear', title: { display: true, text: 'Día del Año' } },
+            y: { title: { display: true, text: 'Consumo (kWh)' } }
+          },
+          plugins: {
+            legend: { labels: { usePointStyle: true } }
+          }
+        }
+      });
     };
 
     const estimar = async () => {
@@ -158,8 +185,7 @@
       if (datos.length < 2) return alert("Se necesitan al menos dos datos para estimar.");
 
       const x = diaDelAnio(fecha);
-      const X = datos.map(d => d.dia);
-      const Y = datos.map(d => d.consumo);
+      const X = datos.map(d => d.dia), Y = datos.map(d => d.consumo);
 
       try {
         const res = await fetch("http://localhost:5000/interpolate", {
@@ -168,14 +194,20 @@
           body: JSON.stringify({ x, X, Y })
         });
 
-        if (!res.ok) throw new Error("No se pudo estimar el consumo.");
-
         const data = await res.json();
+
+        if (!res.ok || data.resultado === undefined) {
+          document.getElementById("resultado").textContent = "No se pudo estimar el consumo.";
+          actualizarGrafico();
+          return;
+        }
+
         document.getElementById("resultado").textContent =
           `Consumo estimado para el día ${x}: ${data.resultado.toFixed(2)} kWh`;
+        actualizarGrafico({ x, y: data.resultado });
 
       } catch (err) {
-        alert(err.message);
+        document.getElementById("resultado").textContent = "Seleccione un rango válido.";
       }
     };
   </script>
