@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: flask-octave-app
-    env: docker
-    plan: free
-    dockerfilePath: Dockerfile
-    autoDeploy: true
-    buildCommand: ""
-    startCommand: "python api.py"
