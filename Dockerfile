@@ -12,10 +12,10 @@ WORKDIR /app
 COPY . .
 
 # Instalar las dependencias de Python necesarias
-RUN pip install --no-cache-dir flask flask-cors oct2py
+RUN pip install --no-cache-dir flask flask-cors oct2py gunicorn
 
 # Exponer el puerto en el que corre Flask
 EXPOSE 5000
 
-# Comando para ejecutar la aplicación
-CMD ["python", "api.py"]
+# Comando para ejecutar la aplicación con Gunicorn (4 workers)
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "api:app"]
