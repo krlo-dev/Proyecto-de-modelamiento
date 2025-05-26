@@ -1,21 +1,21 @@
 FROM python:3.10-slim
 
-# Instalar dependencias del sistema necesarias para Octave
+# Instalar Octave y dependencias necesarias
 RUN apt-get update && \
     apt-get install -y gnupg2 wget octave && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Establecer el directorio de trabajo
+# Crear carpeta de trabajo
 WORKDIR /app
 
-# Copiar todos los archivos del proyecto al contenedor
+# Copiar todos los archivos del proyecto
 COPY . .
 
-# Instalar las dependencias de Python necesarias
+# Instalar dependencias de Python
 RUN pip install --no-cache-dir flask flask-cors oct2py gunicorn
 
-# Exponer el puerto en el que corre Flask
+# Exponer el puerto de Flask
 EXPOSE 5000
 
-# Comando para ejecutar la aplicación con Gunicorn (4 workers)
+# Ejecutar con Gunicorn
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "api:app"]

@@ -1,5 +1,3 @@
-
-
 import { agregarDato, editarDato, eliminarDato, obtenerDatosOrdenados, indiceEditando } from './datos.js';
 import { diaDelAnio, formatearFechaDesdeDia } from './utils.js';
 import { actualizarGrafico } from './grafico.js';
@@ -59,26 +57,30 @@ window.estimar = async () => {
   if (!fecha || datos.length < 2) return alert("Datos insuficientes");
 
   const x = diaDelAnio(fecha);
-  const X = datos.map(d => d.dia), Y = datos.map(d => d.consumo);
+  const X = datos.map(d => d.dia);
+  const Y = datos.map(d => d.consumo);
 
   try {
-    const res = await fetch("http://localhost:5000/interpolate", {
+    const res = await fetch("/interpolate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ x, X, Y })
     });
 
     const data = await res.json();
-    if (!res.ok || data.resultado === undefined) {
+
+    if (!res.ok || data.resultado === undefined || isNaN(data.resultado)) {
       document.getElementById("resultado").textContent = "No se pudo estimar.";
       return actualizarGrafico(datos);
     }
 
     document.getElementById("resultado").textContent =
-      `Consumo estimado para el día ${x}: ${data.resultado.toFixed(2)} kWh`;
-    actualizarGrafico(datos, { x, y: data.resultado });
+      `Consumo estimado para el día ${x}: ${parseFloat(data.resultado).toFixed(2)} kWh`;
+
+    actualizarGrafico(datos, { x, y: parseFloat(data.resultado) });
 
   } catch (e) {
+    console.error("Error en estimación:", e);
     document.getElementById("resultado").textContent = "Error en la estimación.";
   }
 };
