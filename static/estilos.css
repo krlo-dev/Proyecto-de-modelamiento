@@ -1,88 +1,101 @@
+/* Estilos globales para el body */
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to right, #163157, #0E0016);
-  color: white;
-  display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
-  margin: 0;
+  font-family: 'Segoe UI', sans-serif; /* Fuente principal */
+  background: linear-gradient(to right, #163157, #0E0016); /* Degradado azul oscuro a morado oscuro */
+  color: white; /* Texto blanco */
+  display: flex; /* Uso de flexbox para centrar contenido */
+  justify-content: center; /* Centrar horizontalmente */
+  min-height: 100vh; /* Altura mínima: toda la pantalla */
+  padding: 2rem; /* Espaciado interno */
+  margin: 0; /* Sin margen externo */
 }
 
+/* Contenedor principal blanco con sombra y bordes redondeados */
 .container {
   background: white;
-  color: #333;
-  border-radius: 1rem;
-  padding: 2rem;
-  max-width: 700px;
-  width: 100%;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  box-sizing: border-box;
+  color: #333; /* Texto oscuro dentro del contenedor */
+  border-radius: 1rem; /* Bordes redondeados */
+  padding: 2rem; /* Espaciado interno */
+  max-width: 700px; /* Ancho máximo */
+  width: 100%; /* Ocupa todo el ancho posible */
+  box-shadow: 0 0 20px rgba(0,0,0,0.2); /* Sombra ligera */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho */
 }
 
+/* Estilo para el título principal */
 h1 {
-  color: #ff8c00;
+  color: #ff8c00; /* Naranja vibrante */
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem; /* Separación inferior */
 }
 
+/* Etiquetas de formulario */
 label {
   font-weight: bold;
   margin-top: 1rem;
-  display: block;
+  display: block; /* Para que ocupe toda la línea */
 }
 
+/* Estilo general para inputs y botones */
 input, button {
-  width: 100%; /* que ocupen todo el ancho del contenedor */
-  padding: 0.6rem 1rem; /* padding horizontal para que el texto no quede pegado */
-  margin: 0.3rem 0 1rem 0; /* margen arriba y abajo, sin margen horizontal */
-  border-radius: 0.5rem;
-  border: 1px solid #ccc;
+  width: 100%; /* Ocupan todo el ancho del contenedor */
+  padding: 0.6rem 1rem; /* Espaciado interno horizontal y vertical */
+  margin: 0.3rem 0 1rem 0; /* Margen arriba y abajo */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  border: 1px solid #ccc; /* Borde gris claro */
   font-size: 1rem;
-  box-sizing: border-box; /* importante para que padding no aumente el ancho */
-  display: block;
+  box-sizing: border-box; /* Padding no aumenta el ancho total */
+  display: block; /* Para que no haya elementos en línea */
 }
 
+/* Estilo específico para botones */
 button {
-  background-color: #ff8c00;
-  color: white;
+  background-color: #ff8c00; /* Fondo naranja */
+  color: white; /* Texto blanco */
   font-weight: bold;
-  border: none;
-  cursor: pointer;
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cursor puntero */
 }
 
+/* Efecto hover para botones */
 button:hover {
-  background-color: #e67e00;
+  background-color: #e67e00; /* Naranja más oscuro al pasar el mouse */
 }
 
+/* Tabla */
 table {
-  width: 100%;
+  width: 100%; /* Ocupa todo el ancho */
   margin-top: 1rem;
-  border-collapse: collapse;
+  border-collapse: collapse; /* Bordes juntos sin espacio */
 }
 
+/* Bordes para tabla, cabeceras y celdas */
 table, th, td {
   border: 1px solid #ccc;
 }
 
+/* Espaciado y alineación de texto en celdas */
 th, td {
   padding: 0.5rem;
   text-align: center;
 }
 
+/* Estilo para el resultado de la estimación */
 #resultado {
   font-size: 1.2rem;
   margin-top: 1rem;
   text-align: center;
-  color: #163157;
+  color: #163157; /* Azul oscuro */
 }
 
+/* Estilo para el canvas del gráfico */
 canvas {
   margin-top: 2rem;
-  max-width: 100%;
+  max-width: 100%; /* Que se adapte al contenedor */
   height: auto;
 }
 
+/* Línea horizontal decorativa */
 hr {
   border: 0;
   height: 1px;
@@ -90,19 +103,19 @@ hr {
   margin: 2rem 0;
 }
 
-/* Responsive para móviles */
+/* Estilos responsivos para pantallas pequeñas (móviles) */
 @media (max-width: 480px) {
   body {
-    padding: 1rem;
+    padding: 1rem; /* Menos padding para pantallas pequeñas */
   }
 
   .container {
     padding: 1rem;
-    max-width: 100%;
-    border-radius: 0.5rem;
+    max-width: 100%; /* Ancho completo en móviles */
+    border-radius: 0.5rem; /* Bordes menos redondeados */
   }
 
   input, button {
-    max-width: 100%;
+    max-width: 100%; /* No exceden el ancho del contenedor */
   }
 }
